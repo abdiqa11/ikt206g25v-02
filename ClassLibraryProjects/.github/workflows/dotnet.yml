@@ -13,8 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: ['6.0.x', '7.0.x']  # You can adjust these versions as needed
-
+        dotnet-version: [ '9.0.x' ]
+    
     steps:
       # Checkout the code
       - name: Checkout repository
