@@ -3,7 +3,7 @@ name: Build and Test .NET Project
 on:
   push:
     branches:
-      - main
+      - main  # Ensure that this matches your target branch
   pull_request:
     branches:
       - main
@@ -22,20 +22,20 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Install dependencies
-        run: dotnet restore ClassLibraryProjects/ClassLibraryProjects.sln  # Use the full path to the solution
+        run: dotnet restore ClassLibraryProjects/ClassLibraryProjects.sln
 
       - name: Build project
-        run: dotnet build ClassLibraryProjects/ClassLibraryProjects.sln --configuration Release --no-restore  # Build solution
+        run: dotnet build ClassLibraryProjects/ClassLibraryProjects.sln --configuration Release --no-restore
 
       - name: Run tests
-        run: dotnet test ClassLibraryProjects/StringLibraryTest/StringLibraryTest.csproj --logger "trx;LogFileName=test-results.trx" --results-directory "TestResults"  # Specify test project path
+        run: dotnet test ClassLibraryProjects/StringLibraryTest/StringLibraryTest.csproj --logger "trx;LogFileName=test-results.trx" --results-directory "TestResults"
 
       - name: List TestResults Directory (Debugging)
-        run: ls -la TestResults  # List test results directory to verify
+        run: ls -la TestResults
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
           name: TestResults
           path: TestResults/test-results.trx
-        if: ${{ always() }}  # Ensures results are uploaded even if tests fail
+        if: ${{ always() }}
