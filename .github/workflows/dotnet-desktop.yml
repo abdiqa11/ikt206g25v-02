@@ -1,0 +1,48 @@
+name: Build and Test .NET Project
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up the .NET SDK (Adjust the version as needed)
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      # Step 3: Restore dependencies (using the correct .csproj path)
+      - name: Restore dependencies
+        run: dotnet restore ClassLibraryProjects/StringLibrary/StringLibrary.csproj
+
+      # Step 4: Build the project (using the correct .csproj path)
+      - name: Build project
+        run: dotnet build ClassLibraryProjects/StringLibrary/StringLibrary.csproj --configuration Release --no-restore
+
+      # Step 5: Run the tests (using the correct test project .csproj path)
+      - name: Run tests
+        run: dotnet test ClassLibraryProjects/StringLibraryTest/StringLibraryTest.csproj --logger "trx;LogFileName=test-results.trx" --results-directory "TestResults"
+
+      # Step 6: List the TestResults directory (for debugging purposes)
+      - name: List TestResults directory
+        run: ls -la TestResults
+
+      # Step 7: Upload the test results
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: TestResults/test-results.trx
+        if: ${{ always() }}
