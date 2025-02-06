@@ -22,20 +22,20 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Install dependencies
-        run: dotnet restore ClassLibraryProjects.sln  # Specify the solution file
+        run: dotnet restore ClassLibraryProjects/ClassLibraryProjects.sln  # Use the full path to the solution
 
       - name: Build project
-        run: dotnet build ClassLibraryProjects.sln --configuration Release --no-restore
+        run: dotnet build ClassLibraryProjects/ClassLibraryProjects.sln --configuration Release --no-restore  # Build solution
 
       - name: Run tests
-        run: dotnet test ClassLibraryProjects.sln --logger "trx;LogFileName=test-results.trx" --results-directory "TestResults"
+        run: dotnet test ClassLibraryProjects/StringLibraryTest/StringLibraryTest.csproj --logger "trx;LogFileName=test-results.trx" --results-directory "TestResults"  # Specify test project path
 
       - name: List TestResults Directory (Debugging)
-        run: ls -la TestResults
+        run: ls -la TestResults  # List test results directory to verify
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
           name: TestResults
           path: TestResults/test-results.trx
-        if: ${{ always() }}
+        if: ${{ always() }}  # Ensures results are uploaded even if tests fail
