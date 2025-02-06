@@ -1,0 +1,38 @@
+name: Build and Test .NET Project
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4  # Check out the code in the repo
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'  # Set to your required .NET version
+
+      - name: Install dependencies
+        run: dotnet restore  # Restore project dependencies
+
+      - name: Build project
+        run: dotnet build --configuration Release --no-restore  # Build the project
+
+      - name: Run tests
+        run: dotnet test --logger "trx;LogFileName=test-results.trx" --results-directory "TestResults"  # Run tests and log results
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: TestResults/test-results.trx  # Upload the .trx test result file
+        if: ${{ always() }}  # Ensure results are uploaded even if tests fail
