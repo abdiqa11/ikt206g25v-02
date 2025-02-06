@@ -14,25 +14,28 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # Check out the code in the repo
+        uses: actions/checkout@v4
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'  # Set to your required .NET version
+          dotnet-version: '9.0.x'
 
       - name: Install dependencies
-        run: dotnet restore  # Restore project dependencies
+        run: dotnet restore ClassLibraryProjects.sln  # Specify the solution file
 
       - name: Build project
-        run: dotnet build --configuration Release --no-restore  # Build the project
+        run: dotnet build ClassLibraryProjects.sln --configuration Release --no-restore
 
       - name: Run tests
-        run: dotnet test --logger "trx;LogFileName=test-results.trx" --results-directory "TestResults"  # Run tests and log results
+        run: dotnet test ClassLibraryProjects.sln --logger "trx;LogFileName=test-results.trx" --results-directory "TestResults"
+
+      - name: List TestResults Directory (Debugging)
+        run: ls -la TestResults
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         with:
           name: TestResults
-          path: TestResults/test-results.trx  # Upload the .trx test result file
-        if: ${{ always() }}  # Ensure results are uploaded even if tests fail
+          path: TestResults/test-results.trx
+        if: ${{ always() }}
